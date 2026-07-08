@@ -23,8 +23,8 @@ export default function BidRoom() {
       {/* Hero */}
       <section className="bg-white py-24 border-b">
         <div className="max-w-4xl mx-auto text-center px-6">
-          <h2 className="text-6xl font-black mb-6 leading-tight">Everything We Touch,<br />Turns to Gold</h2>
-          <p className="text-2xl text-slate-600 mb-10">Transparent room auctions. Nationwide. Real buyers. Real pickup.</p>
+          <h2 className="text-6xl font-black mb-6 leading-tight">Transparent Room Auctions</h2>
+          <p className="text-2xl text-slate-600 mb-10">Nationwide. Real photos. Real buyers. Real pickup.</p>
           <button onClick={() => setShowSellModal(true)} className="bg-[#1e3a5f] hover:bg-black text-white text-xl font-medium px-12 py-5 rounded-2xl transition">Start Selling Today</button>
         </div>
       </section>
