@@ -8,14 +8,12 @@ export default function SellerDashboard() {
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setUser(data.user));
-
-    const fetchListings = async () => {
-      const { data } = await supabase.from('listings').select('*');
-      setListings(data || []);
-    };
-
-    fetchListings();
+    supabase.auth.getUser().then(({ data }) => {
+      setUser(data.user);
+      if (data.user) {
+        supabase.from('listings').select('*').eq('seller_id', data.user.id).then(({ data }) => setListings(data || []));
+      }
+    });
   }, []);
 
   return (
@@ -25,22 +23,27 @@ export default function SellerDashboard() {
         <p className="mb-8">Welcome, {user?.email}</p>
 
         <div className="bg-white rounded-3xl p-8 shadow">
-          <h2 className="text-2xl font-bold mb-6">Your Active Listings</h2>
+          <h2 className="text-2xl font-bold mb-6">Your Listings ({listings.length})</h2>
           {listings.length === 0 ? (
-            <p>No listings yet. Create your first one!</p>
+            <p>No listings yet.</p>
           ) : (
-            <div className="grid gap-4">
-              {listings.map((listing: any) => (
-                <div key={listing.id} className="border rounded-2xl p-6">
-                  <h3 className="font-bold">{listing.title}</h3>
-                  <p>Current Bid: ${listing.current_bid}</p>
+            <div className="space-y-4">
+              {listings.map((l: any) => (
+                <div key={l.id} className="border rounded-2xl p-6 flex justify-between">
+                  <div>
+                    <h3 className="font-bold">{l.title}</h3>
+                    <p className="text-sm text-slate-500">{l.room_type} • {l.region}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-medium">${l.current_bid || l.starting_bid}</p>
+                  </div>
                 </div>
               ))}
             </div>
           )}
         </div>
 
-        <button onClick={() => window.location.href = '/'} className="mt-8 bg-[#1e3a5f] text-white px-8 py-3 rounded-2xl">Create New Listing</button>
+        <a href="/" className="mt-8 inline-block bg-[#1e3a5f] text-white px-8 py-3 rounded-2xl">Create New Listing</a>
       </div>
     </div>
   );
