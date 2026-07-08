@@ -5,18 +5,14 @@ import { useState } from 'react';
 export default function BidRoom() {
   const [showSellModal, setShowSellModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
-  const [tier, setTier] = useState<'onetime' | 'regular' | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userEmail, setUserEmail] = useState('');
 
-  const [regForm, setRegForm] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    businessName: ''
-  });
-
-  const handleRegister = () => {
-    alert('Registration submitted! (Demo) Welcome to your seller dashboard.');
+  const handleRegister = (email: string) => {
+    setUserEmail(email);
+    setIsLoggedIn(true);
     setShowRegisterModal(false);
+    alert(`Account created for ${email}! Welcome to your seller dashboard.`);
   };
 
   return (
@@ -29,6 +25,7 @@ export default function BidRoom() {
             <a href="#" className="hover:text-[#c9a227] transition">Browse Rooms</a>
             <button onClick={() => setShowSellModal(true)} className="hover:text-[#c9a227] transition font-medium">Sell a Room</button>
             <a href="#" className="hover:text-[#c9a227] transition">How it Works</a>
+            {isLoggedIn && <span className="text-[#c9a227]">Welcome, {userEmail.split('@')[0]}</span>}
           </nav>
         </div>
       </header>
@@ -50,14 +47,14 @@ export default function BidRoom() {
               <h3 className="text-3xl font-bold mb-8 text-center">How do you want to sell?</h3>
 
               <div className="space-y-4">
-                <div onClick={() => {setTier('onetime'); alert('Quick Sell flow started (demo)'); setShowSellModal(false);}} className="cursor-pointer border-2 border-emerald-500 hover:bg-emerald-50 rounded-3xl p-8 transition">
+                <div onClick={() => {alert('Quick Sell flow started (demo)'); setShowSellModal(false);}} className="cursor-pointer border-2 border-emerald-500 hover:bg-emerald-50 rounded-3xl p-8 transition">
                   <div className="font-bold text-2xl mb-2">Quick Sell (One-time)</div>
-                  <div className="text-slate-600">Simple process for families clearing one room or house. No full account needed.</div>
+                  <div className="text-slate-600">Simple process — no account needed.</div>
                 </div>
 
                 <div onClick={() => {setShowSellModal(false); setShowRegisterModal(true);}} className="cursor-pointer border-2 border-[#1e3a5f] hover:bg-slate-100 rounded-3xl p-8 transition">
                   <div className="font-bold text-2xl mb-2">Register as Permanent Seller</div>
-                  <div className="text-slate-600">Full dashboard, Penny Jar, Whole House bids, volume discounts, and tools.</div>
+                  <div className="text-slate-600">Full dashboard and tools.</div>
                 </div>
               </div>
             </div>
@@ -68,20 +65,19 @@ export default function BidRoom() {
         </div>
       )}
 
-      {/* Permanent Seller Registration Modal */}
+      {/* Registration Modal */}
       {showRegisterModal && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-[100]" onClick={() => setShowRegisterModal(false)}>
           <div className="bg-white rounded-3xl max-w-md w-full mx-4 p-8" onClick={e => e.stopPropagation()}>
-            <h3 className="text-3xl font-bold mb-6 text-center">Create Permanent Seller Account</h3>
+            <h3 className="text-3xl font-bold mb-6 text-center">Create Seller Account</h3>
             
-            <div className="space-y-6">
-              <input type="text" placeholder="Full Name" className="w-full border border-slate-300 rounded-xl px-4 py-3" value={regForm.name} onChange={(e) => setRegForm({...regForm, name: e.target.value})} />
-              <input type="email" placeholder="Email Address" className="w-full border border-slate-300 rounded-xl px-4 py-3" value={regForm.email} onChange={(e) => setRegForm({...regForm, email: e.target.value})} />
-              <input type="tel" placeholder="Phone Number" className="w-full border border-slate-300 rounded-xl px-4 py-3" value={regForm.phone} onChange={(e) => setRegForm({...regForm, phone: e.target.value})} />
-              <input type="text" placeholder="Business Name (optional)" className="w-full border border-slate-300 rounded-xl px-4 py-3" value={regForm.businessName} onChange={(e) => setRegForm({...regForm, businessName: e.target.value})} />
+            <input id="reg-email" type="email" placeholder="Email Address" className="w-full border border-slate-300 rounded-xl px-4 py-3 mb-4" />
+            <input id="reg-password" type="password" placeholder="Password" className="w-full border border-slate-300 rounded-xl px-4 py-3 mb-6" />
 
-              <button onClick={handleRegister} className="w-full bg-[#1e3a5f] text-white py-4 rounded-2xl font-medium text-lg">Create Account & Start Selling</button>
-            </div>
+            <button onClick={() => {
+              const email = (document.getElementById('reg-email') as HTMLInputElement).value;
+              if (email) handleRegister(email);
+            }} className="w-full bg-[#1e3a5f] text-white py-4 rounded-2xl font-medium text-lg">Create Account</button>
 
             <div className="text-center mt-6">
               <button onClick={() => setShowRegisterModal(false)} className="text-slate-500">Cancel</button>
