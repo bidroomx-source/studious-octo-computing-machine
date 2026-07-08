@@ -9,6 +9,8 @@ export default function BidRoom() {
   const [softMinutes, setSoftMinutes] = useState(3);
   const [currentBid, setCurrentBid] = useState(100);
   const [isWholeHouse, setIsWholeHouse] = useState(false);
+  const [pennyBalance, setPennyBalance] = useState(42);
+  const [buyerConfirmed, setBuyerConfirmed] = useState(false);
 
   const roomTypes = ["Garage", "Storage Room", "Bedroom", "Kitchen", "Living Room", "Bathroom", "Laundry Room", "Playroom", "Home Office", "Basement", "Attic", "Workshop", "Other"];
 
@@ -54,16 +56,47 @@ export default function BidRoom() {
               </select>
             </div>
 
-            {/* Whole House Toggle */}
+            {/* Whole House */}
             <div className="flex items-center gap-3">
               <input type="checkbox" checked={isWholeHouse} onChange={(e) => setIsWholeHouse(e.target.checked)} className="w-5 h-5" />
-              <label>Enable Whole House Bidding (for 3+ rooms on same property)</label>
+              <label className="font-medium">Enable Whole House Bidding (3+ rooms)</label>
+            </div>
+
+            {/* Close Style */}
+            <div>
+              <label className="block text-sm font-medium mb-2">Auction Close Style</label>
+              <div className="flex gap-4">
+                <button onClick={() => setCloseStyle('sudden')} className={`flex-1 py-4 rounded-2xl border ${closeStyle === 'sudden' ? 'border-red-500 bg-red-50' : 'border-slate-300'}`}>Sudden Death</button>
+                <button onClick={() => setCloseStyle('soft')} className={`flex-1 py-4 rounded-2xl border ${closeStyle === 'soft' ? 'border-amber-500 bg-amber-50' : 'border-slate-300'}`}>Soft Close</button>
+              </div>
+              {closeStyle === 'soft' && (
+                <select value={softMinutes} onChange={(e) => setSoftMinutes(Number(e.target.value))} className="mt-4 w-full border border-slate-300 rounded-xl px-4 py-3">
+                  <option value={1}>1 minute extension</option>
+                  <option value={3}>3 minutes extension (recommended)</option>
+                  <option value={5}>5 minutes extension</option>
+                </select>
+              )}
             </div>
 
             {/* Bidding */}
-            <div className="border border-slate-300 rounded-3xl p-8">
-              <h3 className="font-bold text-xl mb-4">Current Bid: ${currentBid}</h3>
-              <button onClick={() => setCurrentBid(currentBid + 50)} className="bg-[#1e3a5f] text-white px-8 py-3 rounded-2xl font-medium">Place Bid (+$50)</button>
+            <div className="border border-slate-300 rounded-3xl p-8 bg-white">
+              <h3 className="font-bold text-2xl mb-4">Current Bid: ${currentBid}</h3>
+              <button onClick={() => setCurrentBid(currentBid + 50)} className="bg-[#1e3a5f] text-white px-8 py-3 rounded-2xl font-medium hover:bg-black">Place Bid (+$50)</button>
+            </div>
+
+            {/* Penny Jar Mock */}
+            {tier === 'regular' && (
+              <div className="text-center text-sm bg-yellow-100 p-4 rounded-2xl">
+                Penny Jar Balance: {pennyBalance} pennies (${(pennyBalance / 4).toFixed(2)})
+              </div>
+            )}
+
+            {/* Buyer Confirmation Mock */}
+            <div className="border border-slate-300 rounded-3xl p-8 bg-white">
+              <h4 className="font-medium mb-3">Buyer Confirmation (Protection)</h4>
+              <button onClick={() => setBuyerConfirmed(!buyerConfirmed)} className="bg-green-600 text-white px-6 py-3 rounded-2xl">
+                {buyerConfirmed ? "Confirmed - Funds Released" : "Confirm Pickup Complete"}
+              </button>
             </div>
           </div>
         )}
