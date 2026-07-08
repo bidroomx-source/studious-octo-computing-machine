@@ -1,18 +1,29 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { supabase } from '../lib/supabase';
 
 export default function BidRoom() {
   const [showSellModal, setShowSellModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userEmail, setUserEmail] = useState('');
+  const [user, setUser] = useState<any>(null);
 
-  const handleRegister = (email: string) => {
-    setUserEmail(email);
-    setIsLoggedIn(true);
-    setShowRegisterModal(false);
-    alert(`Account created for ${email}! Welcome to your seller dashboard.`);
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleRegister = async (email: string, password: string) => {
+    const { error } = await supabase.auth.signUp({ email, password });
+    if (error) alert(error.message);
+    else alert('Check your email for confirmation!');
   };
 
   return (
@@ -25,7 +36,7 @@ export default function BidRoom() {
             <a href="#" className="hover:text-[#c9a227] transition">Browse Rooms</a>
             <button onClick={() => setShowSellModal(true)} className="hover:text-[#c9a227] transition font-medium">Sell a Room</button>
             <a href="#" className="hover:text-[#c9a227] transition">How it Works</a>
-            {isLoggedIn && <span className="text-[#c9a227]">Welcome, {userEmail.split('@')[0]}</span>}
+            {user && <span className="text-[#c9a227]">Hi, {user.email}</span>}
           </nav>
         </div>
       </header>
@@ -76,7 +87,8 @@ export default function BidRoom() {
 
             <button onClick={() => {
               const email = (document.getElementById('reg-email') as HTMLInputElement).value;
-              if (email) handleRegister(email);
+              const password = (document.getElementById('reg-password') as HTMLInputElement).value;
+              if (email && password) handleRegister(email, password);
             }} className="w-full bg-[#1e3a5f] text-white py-4 rounded-2xl font-medium text-lg">Create Account</button>
 
             <div className="text-center mt-6">
