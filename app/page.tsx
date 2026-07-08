@@ -3,14 +3,15 @@
 import { useState } from 'react';
 
 export default function BidRoom() {
+  const [step, setStep] = useState(1);
   const [tier, setTier] = useState<'onetime' | 'regular' | null>(null);
   const [roomType, setRoomType] = useState('');
-  const [closeStyle, setCloseStyle] = useState<'sudden' | 'soft' | null>(null);
+  const [region, setRegion] = useState('');
+  const [title, setTitle] = useState('');
+  const [startingBid, setStartingBid] = useState(100);
+  const [closeStyle, setCloseStyle] = useState<'sudden' | 'soft'>('soft');
   const [softMinutes, setSoftMinutes] = useState(3);
-  const [currentBid, setCurrentBid] = useState(100);
   const [isWholeHouse, setIsWholeHouse] = useState(false);
-  const [pennyBalance, setPennyBalance] = useState(42);
-  const [buyerConfirmed, setBuyerConfirmed] = useState(false);
 
   const roomTypes = ["Garage", "Storage Room", "Bedroom", "Kitchen", "Living Room", "Bathroom", "Laundry Room", "Playroom", "Home Office", "Basement", "Attic", "Workshop", "Other"];
 
@@ -27,77 +28,75 @@ export default function BidRoom() {
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-6 py-12">
-        <h2 className="text-5xl font-black text-center mb-4">BidRoom</h2>
-        <p className="text-center text-xl text-slate-600 mb-12">Transparent. Nationwide. Real Pickup.</p>
+      <main className="max-w-4xl mx-auto px-6 py-12">
+        <h2 className="text-5xl font-black text-center mb-8">Create Your Listing</h2>
 
-        {/* Tier Selection */}
-        <div className="mb-12">
-          <h3 className="text-2xl font-bold text-center mb-6">How do you want to sell?</h3>
-          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            <div onClick={() => setTier('onetime')} className={`cursor-pointer border-2 rounded-3xl p-8 transition-all ${tier === 'onetime' ? 'border-emerald-500 bg-emerald-50' : 'border-slate-200 hover:border-emerald-300'}`}>
-              <h4 className="font-bold text-xl mb-2">Quick Sell (One-time)</h4>
-              <p className="text-sm text-slate-600">Perfect for families clearing one room or house.</p>
-            </div>
-            <div onClick={() => setTier('regular')} className={`cursor-pointer border-2 rounded-3xl p-8 transition-all ${tier === 'regular' ? 'border-[#1e3a5f] bg-slate-100' : 'border-slate-200 hover:border-[#1e3a5f]'}`}>
-              <h4 className="font-bold text-xl mb-2">Regular Seller</h4>
-              <p className="text-sm text-slate-600">Full tools, Penny Jar, Whole House bids, volume discounts.</p>
-            </div>
-          </div>
+        {/* Progress */}
+        <div className="flex justify-center gap-4 mb-12">
+          {[1,2,3].map(s => (
+            <div key={s} className={`w-8 h-8 rounded-full flex items-center justify-center ${step === s ? 'bg-[#1e3a5f] text-white' : 'bg-slate-200'}`}>{s}</div>
+          ))}
         </div>
 
-        {tier && (
-          <div className="max-w-2xl mx-auto space-y-8">
+        {step === 1 && (
+          <div className="space-y-8">
             <div>
-              <label className="block text-sm font-medium mb-2">Room Type</label>
-              <select value={roomType} onChange={(e) => setRoomType(e.target.value)} className="w-full border border-slate-300 rounded-xl px-4 py-3 text-lg">
-                <option value="">Select room type...</option>
+              <label className="block font-medium mb-2">Selling Path</label>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div onClick={() => {setTier('onetime'); setStep(2);}} className="cursor-pointer border-2 border-emerald-500 rounded-3xl p-6 hover:bg-emerald-50">Quick Sell (One-time)</div>
+                <div onClick={() => {setTier('regular'); setStep(2);}} className="cursor-pointer border-2 border-[#1e3a5f] rounded-3xl p-6 hover:bg-slate-100">Regular Seller Account</div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {step === 2 && (
+          <div className="space-y-8">
+            <div>
+              <label className="block font-medium mb-2">Room Type</label>
+              <select value={roomType} onChange={(e) => setRoomType(e.target.value)} className="w-full border border-slate-300 rounded-xl px-4 py-3">
+                <option value="">Select...</option>
                 {roomTypes.map(t => <option key={t} value={t}>{t}</option>)}
               </select>
             </div>
 
-            {/* Whole House */}
-            <div className="flex items-center gap-3">
-              <input type="checkbox" checked={isWholeHouse} onChange={(e) => setIsWholeHouse(e.target.checked)} className="w-5 h-5" />
-              <label className="font-medium">Enable Whole House Bidding (3+ rooms)</label>
+            <div>
+              <label className="block font-medium mb-2">Region (Craigslist-style)</label>
+              <input type="text" placeholder="e.g. dothan-wiregrass, atlanta, houston" className="w-full border border-slate-300 rounded-xl px-4 py-3" value={region} onChange={(e) => setRegion(e.target.value)} />
             </div>
 
-            {/* Close Style */}
             <div>
-              <label className="block text-sm font-medium mb-2">Auction Close Style</label>
+              <label className="block font-medium mb-2">Listing Title</label>
+              <input type="text" placeholder="Beautiful bedroom full of vintage furniture" className="w-full border border-slate-300 rounded-xl px-4 py-3" value={title} onChange={(e) => setTitle(e.target.value)} />
+            </div>
+
+            <button onClick={() => setStep(3)} className="w-full bg-[#1e3a5f] text-white py-4 rounded-2xl font-medium">Continue to Auction Settings</button>
+          </div>
+        )}
+
+        {step === 3 && (
+          <div className="space-y-8">
+            <div>
+              <label className="block font-medium mb-2">Starting Bid ($)</label>
+              <input type="number" value={startingBid} onChange={(e) => setStartingBid(Number(e.target.value))} className="w-full border border-slate-300 rounded-xl px-4 py-3 text-3xl font-bold" />
+            </div>
+
+            <div>
+              <label className="block font-medium mb-2">Auction Close Style</label>
               <div className="flex gap-4">
                 <button onClick={() => setCloseStyle('sudden')} className={`flex-1 py-4 rounded-2xl border ${closeStyle === 'sudden' ? 'border-red-500 bg-red-50' : 'border-slate-300'}`}>Sudden Death</button>
                 <button onClick={() => setCloseStyle('soft')} className={`flex-1 py-4 rounded-2xl border ${closeStyle === 'soft' ? 'border-amber-500 bg-amber-50' : 'border-slate-300'}`}>Soft Close</button>
               </div>
               {closeStyle === 'soft' && (
                 <select value={softMinutes} onChange={(e) => setSoftMinutes(Number(e.target.value))} className="mt-4 w-full border border-slate-300 rounded-xl px-4 py-3">
-                  <option value={1}>1 minute extension</option>
-                  <option value={3}>3 minutes extension (recommended)</option>
-                  <option value={5}>5 minutes extension</option>
+                  <option value={1}>1 min extension</option>
+                  <option value={3}>3 min extension</option>
+                  <option value={5}>5 min extension</option>
                 </select>
               )}
             </div>
 
-            {/* Bidding */}
-            <div className="border border-slate-300 rounded-3xl p-8 bg-white">
-              <h3 className="font-bold text-2xl mb-4">Current Bid: ${currentBid}</h3>
-              <button onClick={() => setCurrentBid(currentBid + 50)} className="bg-[#1e3a5f] text-white px-8 py-3 rounded-2xl font-medium hover:bg-black">Place Bid (+$50)</button>
-            </div>
-
-            {/* Penny Jar Mock */}
-            {tier === 'regular' && (
-              <div className="text-center text-sm bg-yellow-100 p-4 rounded-2xl">
-                Penny Jar Balance: {pennyBalance} pennies (${(pennyBalance / 4).toFixed(2)})
-              </div>
-            )}
-
-            {/* Buyer Confirmation Mock */}
-            <div className="border border-slate-300 rounded-3xl p-8 bg-white">
-              <h4 className="font-medium mb-3">Buyer Confirmation (Protection)</h4>
-              <button onClick={() => setBuyerConfirmed(!buyerConfirmed)} className="bg-green-600 text-white px-6 py-3 rounded-2xl">
-                {buyerConfirmed ? "Confirmed - Funds Released" : "Confirm Pickup Complete"}
-              </button>
-            </div>
+            <button onClick={() => alert('Listing Created! (Demo)')} className="w-full bg-green-600 text-white py-4 rounded-2xl font-medium text-lg">Create Listing — $10</button>
           </div>
         )}
       </main>
