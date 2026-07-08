@@ -5,7 +5,10 @@ import { supabase } from '../lib/supabase';
 
 export default function BidRoom() {
   const [user, setUser] = useState<any>(null);
-  const [showSellModal, setShowSellModal] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setUser(data.user));
@@ -17,9 +20,19 @@ export default function BidRoom() {
     return () => listener.subscription.unsubscribe();
   }, []);
 
-  const signOut = async () => {
-    await supabase.auth.signOut();
+  const handleAuth = async () => {
+    if (isLogin) {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) alert(error.message);
+      else setShowAuthModal(false);
+    } else {
+      const { error } = await supabase.auth.signUp({ email, password });
+      if (error) alert(error.message);
+      else alert('Check your email for confirmation!');
+    }
   };
+
+  const signOut = async () => await supabase.auth.signOut();
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans">
@@ -28,20 +41,12 @@ export default function BidRoom() {
           <h1 className="text-4xl font-black tracking-tight">BidRoom</h1>
           <nav className="flex gap-8 text-lg items-center">
             <a href="#" className="hover:text-[#c9a227]">Browse</a>
-            <button onClick={() => setShowSellModal(true)} className="hover:text-[#c9a227] font-medium">Sell</button>
-            {user ? (
-              <div className="flex items-center gap-4">
-                <span>{user.email}</span>
-                <button onClick={signOut} className="text-sm underline">Sign Out</button>
-              </div>
-            ) : (
-              <button onClick={() => setShowSellModal(true)} className="hover:text-[#c9a227]">Login / Register</button>
-            )}
+            <button onClick={() => setShowAuthModal(true)} className="hover:text-[#c9a227] font-medium">Sell</button>
+            {user && <button onClick={signOut} className="text-sm underline">Sign Out</button>}
           </nav>
         </div>
       </header>
 
-      {/* Rest of your hero and content */}
       <section className="bg-white py-24 border-b">
         <div className="max-w-4xl mx-auto text-center px-6">
           <h2 className="text-6xl font-black mb-6">Transparent Room Auctions</h2>
@@ -49,14 +54,20 @@ export default function BidRoom() {
         </div>
       </section>
 
-      {/* Sell Modal with Login Option */}
-      {showSellModal && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-[100]" onClick={() => setShowSellModal(false)}>
-          <div className="bg-white rounded-3xl max-w-lg w-full mx-4 p-8" onClick={e => e.stopPropagation()}>
-            <h3 className="text-3xl font-bold mb-6 text-center">Get Started</h3>
+      {/* Auth Modal */}
+      {showAuthModal && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-[100]" onClick={() => setShowAuthModal(false)}>
+          <div className="bg-white rounded-3xl max-w-md w-full mx-4 p-8" onClick={e => e.stopPropagation()}>
+            <h3 className="text-3xl font-bold mb-6 text-center">{isLogin ? 'Login' : 'Register'}</h3>
             
-            <button onClick={() => alert('Login flow - use Supabase auth UI in production')} className="w-full bg-[#1e3a5f] text-white py-4 rounded-2xl mb-4">Login</button>
-            <button onClick={() => alert('Register as Permanent Seller')} className="w-full border border-[#1e3a5f] text-[#1e3a5f] py-4 rounded-2xl">Register as Seller</button>
+            <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full border border-slate-300 rounded-xl px-4 py-3 mb-4" />
+            <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full border border-slate-300 rounded-xl px-4 py-3 mb-6" />
+
+            <button onClick={handleAuth} className="w-full bg-[#1e3a5f] text-white py-4 rounded-2xl mb-4">{isLogin ? 'Login' : 'Register'}</button>
+            
+            <button onClick={() => setIsLogin(!isLogin)} className="text-[#1e3a5f] underline block w-full text-center">
+              {isLogin ? 'Need an account? Register' : 'Already have an account? Login'}
+            </button>
           </div>
         </div>
       )}
