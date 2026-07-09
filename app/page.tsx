@@ -10,10 +10,7 @@ export default function BidRoom() {
       {/* Header */}
       <header className="bg-[#1e3a5f] text-white py-6 sticky top-0 z-50 shadow">
         <div className="max-w-6xl mx-auto px-6 flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-3">
-  <h1 className="text-4xl font-black tracking-tight">BidRoom</h1>
-</div>
+          <h1 className="text-4xl font-black tracking-tight">BidRoom</h1>
           <nav className="flex gap-8 text-lg">
             <a href="/browse" className="hover:text-[#c9a227] transition">Browse Rooms</a>
             <button onClick={() => setShowSellModal(true)} className="hover:text-[#c9a227] transition font-medium">Sell</button>
@@ -37,13 +34,11 @@ export default function BidRoom() {
           <div className="bg-white rounded-3xl max-w-lg w-full mx-4 overflow-hidden" onClick={e => e.stopPropagation()}>
             <div className="p-8">
               <h3 className="text-3xl font-bold mb-8 text-center">How do you want to sell?</h3>
-
               <div className="space-y-4">
                 <div onClick={() => alert('Quick Sell started')} className="cursor-pointer border-2 border-emerald-500 hover:bg-emerald-50 rounded-3xl p-8 transition">
                   <div className="font-bold text-2xl mb-2">Quick Sell (One-time)</div>
                   <div className="text-slate-600">Simple process for families clearing one room or house.</div>
                 </div>
-
                 <div onClick={() => alert('Permanent seller registration')} className="cursor-pointer border-2 border-[#1e3a5f] hover:bg-slate-100 rounded-3xl p-8 transition">
                   <div className="font-bold text-2xl mb-2">Register as Permanent Seller</div>
                   <div className="text-slate-600">Full dashboard, Penny Jar, Whole House bids, volume discounts.</div>
