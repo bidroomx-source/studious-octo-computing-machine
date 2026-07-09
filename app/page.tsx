@@ -46,7 +46,7 @@ export default function BidRoom() {
               </div>
               {/* Square Payment Demo */}
               <div className="mt-8 pt-6 border-t">
-                <button className="w-full bg-green-600 text-white py-4 rounded-2xl font-medium">Pay $10 Listing Fee with Square</button>
+                <button onClick={() => alert('Square Checkout opened (demo)')} className="w-full bg-green-600 text-white py-4 rounded-2xl font-medium">Pay $10 Listing Fee with Square</button>
               </div>
             </div>
             <div className="border-t p-4 text-center">
@@ -55,6 +55,3 @@ export default function BidRoom() {
           </div>
         </div>
       )}
-    </div>
-  );
-}
