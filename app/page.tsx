@@ -11,9 +11,9 @@ export default function BidRoom() {
       <header className="bg-[#1e3a5f] text-white py-6 sticky top-0 z-50 shadow">
         <div className="max-w-6xl mx-auto px-6 flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-[#c9a227] rounded-full flex items-center justify-center text-2xl">🏠</div>
-            <h1 className="text-4xl font-black tracking-tight">BidRoom</h1>
-          </div>
+            <div className="flex items-center gap-3">
+  <h1 className="text-4xl font-black tracking-tight">BidRoom</h1>
+</div>
           <nav className="flex gap-8 text-lg">
             <a href="/browse" className="hover:text-[#c9a227] transition">Browse Rooms</a>
             <button onClick={() => setShowSellModal(true)} className="hover:text-[#c9a227] transition font-medium">Sell</button>
